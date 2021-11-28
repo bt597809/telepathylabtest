@@ -29,19 +29,19 @@ namespace TelepathyLabsTest
                     }
                     else
                     {
-                        if(command == "1")
+                        if (command == "1")
                         {
                             Console.WriteLine("Commands list:");
                             Console.WriteLine(" list (lists all available rooms)");
                             Console.WriteLine(" book (books the nearest available room from the entrance)");
-                            Console.WriteLine(" checkout 1A (checks out the room)");
-                            Console.WriteLine(" clean 1A (cleans the room)");
-                            Console.WriteLine(" repair 1A (sets the room to repair mode)");
-                            Console.WriteLine(" fix 1A (repairs and sets the room to vacant)");
+                            Console.WriteLine(" checkout (checks out the room)");
+                            Console.WriteLine(" clean (cleans the room)");
+                            Console.WriteLine(" repair (sets the room to repair mode)");
+                            Console.WriteLine(" fix (repairs and sets the room to vacant)");
                             Console.WriteLine(" exit (quits the application)");
                             module = Hotel.Instance;
                         }
-                        else if(command == "2")
+                        else if (command == "2")
                         {
                             Console.WriteLine("Commands list");
                             Console.WriteLine(" run (1*2)+3");
@@ -91,12 +91,12 @@ namespace TelepathyLabsTest
     //        }
     //        else
     //        {
-                
+
     //        }
     //    }
     //}
 
-    class Hotel: ICommand
+    class Hotel : ICommand
     {
         private string _roomsSample = "1a,1b,1c,1d,1e,2e,2d,2c,2b,2a,3a,3b,3c,3d,3e,4e,4d,4c,4b,4a";
         public Dictionary<string, Status> Rooms { get; set; }
@@ -123,6 +123,7 @@ namespace TelepathyLabsTest
             string bookedRoom = null;
             for (int i = 0; i < Rooms.Count; i++)
             {
+
                 room = Rooms.ElementAt(i);
                 if (room.Value == Status.Available)
                 {
@@ -131,37 +132,39 @@ namespace TelepathyLabsTest
                     break;
                 }
             }
+
             if (bookedRoom == null)
             {
                 Console.WriteLine("No rooms available now.");
             }
             else
             {
-                Console.WriteLine("Hurray, you got a room - " + bookedRoom);
+                Console.WriteLine("Your booked room - " + bookedRoom);
             }
+
         }
 
         void Checkout(string room)
         {
-            this._setStatus(room, Status.Occupied, Status.Vacant);
+            this._setStatus(room, Status.Occupied, Status.Vacant, "checkout");
         }
 
         void Clean(string room)
         {
-            this._setStatus(room, Status.Vacant, Status.Available);
+            this._setStatus(room, Status.Vacant, Status.Available, "cleaned");
         }
 
         void Repair(string room)
         {
-            this._setStatus(room, Status.Vacant, Status.Repair);
+            this._setStatus(room, Status.Vacant, Status.Repair, "repaired");
         }
 
         void Fix(string room)
         {
-            this._setStatus(room, Status.Repair, Status.Vacant);
+            this._setStatus(room, Status.Repair, Status.Vacant, "fixed");
         }
 
-        void _setStatus(string room, Status fromStatus, Status toStatus)
+        void _setStatus(string room, Status fromStatus, Status toStatus, string activity)
         {
             if (Rooms.ContainsKey(room))
             {
@@ -169,11 +172,11 @@ namespace TelepathyLabsTest
                 if (status == fromStatus)
                 {
                     Rooms[room] = toStatus;
-                    Console.WriteLine("Command accepted");
+                    Console.WriteLine(string.Format("room {0} has been {1} successfully", room, activity));
                 }
                 else
                 {
-                    Console.WriteLine("Command rejected");
+                    Console.WriteLine(string.Format("room {0} could not {1}, Please contact help desk.", room, activity));
                 }
             }
             else
